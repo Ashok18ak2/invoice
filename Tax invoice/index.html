@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Invoice Data Entry</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="script.js" defer></script>
+</head>
+<body>
+    <div class="form-container">
+        <header>
+            <div class="company-details">
+                <h1>Maxmoc Motor Works India Private Limited</h1>
+                <p>3/96 N, Panjampatty, Alamarathupatti, Dindigul - 624303</p>
+                <p>Tel: 9952823148 | GST No: 33AAQCM2589R1ZG</p>
+            </div>
+            <div class="logo">
+                <img src="/img/Logo.png" alt="Company Logo" id="logoImage">
+            </div>
+        </header>
+        
+        <h2>Enter Tax Invoice Details</h2>
+        <h3>Customer Details</h3>
+        <form id="invoiceForm">
+            <label for="customerName">Customer Name:</label>
+            <input type="text" id="customerName" name="customerName" style="text-transform: capitalize;"><br>
+
+            <label for="customerAddress">Customer Address 1:</label>
+            <input name="customerAddress" id="customerAddress"></input><br>
+
+            <label for="customerAddress2">Customer Address 2:</label>
+            <input name="customerAddress2" id="customerAddress2"></input><br>
+
+            <label for="customerAddress3">Customer Address 3:</label>
+            <input name="customerAddress3" id="customerAddress3"></input><br>
+            
+            <label for="gstNo">GSTIN/UIN No:</label>
+            <input type="text" id="gstNo" name="gstNo"  style="text-transform: uppercase;" ><br>
+
+            <label for="teleNo">Contact No:</label>
+            <input type="text" id="teleNo" name="teleNo" maxlength="10" onkeypress="return event.charCode>=48 && event.charCode<=57" ><br>
+
+            <label for="email">Email:</label>
+            <input type="text" id="Email" name="Email"><br>
+
+            <label for="country">Country:</label>
+            <select id="country" name="country" onchange="populateStates()">
+                <option value="">Select Country</option>
+            </select>
+
+            <label for="stateName">State Name:</label>
+            <select id="stateName" name="stateName">
+                <option value="">Select State</option>
+            </select>
+
+            <label for="vehicleNo">Vehicle No:</label>
+            <input type="text" id="vehicleNo" name="vehicleNo">
+            
+            <h3>Company Details</h3>
+
+            <label for="invoiceNumber">Tax invoice Number:</label>
+            <input type="text" id="invoiceNumber" name="invoiceNumber" ><br>
+
+            <label for="invoiceDate">Invoice Date:</label>
+            <input type="date" id="invoiceDate" name="invoiceDate" ><br>
+            
+            <label for="PO/WO">Your Po/Wo No:</label>
+            <input type="text" id="PO/WO" name="PO/WO" ><br>
+
+            <label for="dueDate">Po Date:</label>
+            <input type="date" id="dueDate" name="dueDate" ><br>
+
+            <h3>Products</h3>
+            <div class="product-details">
+                <table id="productTable">
+                    <thead>
+                        <tr>
+                            <th>S.No</th>
+                            <th>Product Description</th>
+                            <th>HSN Code</th>
+                            <th>Quantity</th>
+                            <th>Rate Per Unit</th>
+                            <th>Amount(INR)</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody id="productTableBody">
+                        <!-- Product rows will be added here -->
+                    </tbody>
+                </table>
+                <button id="add" type="button" onclick="addNewItem()">Add Product</button>
+            </div>
+        
+            <input type="submit" value="Submit" id="Submit">
+        </form>
+    </div>
+    <script>
+        // Country and States Data
+    const countryStateData = {
+        "India": [
+            "Andhra Pradesh", "Arunachal Pradesh", "Assam", "Bihar", "Chhattisgarh",
+            "Goa", "Gujarat", "Haryana", "Himachal Pradesh", "Jharkhand", "Karnataka", 
+            "Kerala", "Madhya Pradesh", "Maharashtra", "Manipur", "Meghalaya", 
+            "Mizoram", "Nagaland", "Odisha", "Punjab", "Rajasthan", "Sikkim", 
+            "Tamil Nadu", "Telangana", "Tripura", "Uttar Pradesh", "Uttarakhand", 
+            "West Bengal", "Andaman and Nicobar Islands", "Chandigarh", 
+            "Dadra and Nagar Haveli and Daman and Diu", "Delhi", "Jammu and Kashmir", 
+            "Lakshadweep", "Ladakh", "Puducherry"],
+    };
+
+    // Populate the country dropdown
+    const countryDropdown = document.getElementById("country");
+    const stateDropdown = document.getElementById("stateName");
+
+    // Add country options to the dropdown
+    Object.keys(countryStateData).forEach(country => {
+        const option = document.createElement("option");
+        option.value = country;
+        option.textContent = country;
+        countryDropdown.appendChild(option);
+    });
+
+    // Function to populate the states based on selected country
+    function populateStates() {
+        const selectedCountry = countryDropdown.value;
+        stateDropdown.innerHTML = '<option value="">Select State</option>'; // Reset state dropdown
+
+        if (selectedCountry && countryStateData[selectedCountry]) {
+            countryStateData[selectedCountry].forEach(state => {
+                const option = document.createElement("option");
+                option.value = state;
+                option.textContent = state;
+                stateDropdown.appendChild(option);
+            });
+        }
+    }
+    </script>
+</body>
+</html>    
+    

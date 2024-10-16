@@ -1,0 +1,461 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Invoice</title>
+    <link rel="stylesheet" href="invoice-template.css">
+    <script src="script.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.9.2/html2pdf.bundle.min.js"></script>
+    <script>
+        function populateInvoice() {
+            const invoiceData = JSON.parse(localStorage.getItem('invoiceData'));
+            const productData = JSON.parse(localStorage.getItem('productData'));
+
+            if (invoiceData) {
+                // Populate customer details
+                document.querySelector('.customer-details table tr:nth-child(2) td').textContent = invoiceData.customerName;
+                document.querySelector('.customer-details table tr:nth-child(3) td').textContent = invoiceData.customerAddress;
+                document.querySelector('.customer-details table tr:nth-child(4) td').textContent = invoiceData.customerAddress2;
+                document.querySelector('.customer-details table tr:nth-child(5) td').textContent = invoiceData.customerAddress3;
+                document.querySelector('.customer-details table tr:nth-child(6) td').textContent = invoiceData.gstNo;
+                document.querySelector('.customer-details table tr:nth-child(7) td').textContent = invoiceData.teleNo;
+                document.querySelector('.customer-details table tr:nth-child(8) td').textContent = invoiceData.Email;
+                document.querySelector('.customer-details table tr:nth-child(9) td').textContent = invoiceData.stateName;
+                document.querySelector('.customer-details table tr:nth-child(10) td').textContent = invoiceData.vehicleNo;
+
+                // Populate invoice details
+                document.querySelector('.customer-details-input-datas table tr:nth-child(1) td').textContent = invoiceData.invoiceNumber || 'xxxxxxx';
+                document.querySelector('.customer-details-input-datas table tr:nth-child(2) td').textContent = invoiceData.invoiceDate || 'xxxxxxx';
+                document.querySelector('.customer-details-input-datas table tr:nth-child(3) td').textContent = invoiceData['PO/WO'] || '.' ;
+                document.querySelector('.customer-details-input-datas table tr:nth-child(4) td').textContent = invoiceData.dueDate || '.';
+                document.querySelector('.qr-info-name-details #bottomDate').textContent = invoiceData.invoiceDate || 'xxxxxxx';
+               
+            }
+            if (productData) {
+                const productTableBody = document.querySelector('.product-details-container table tbody');
+                let subtotal = 0;
+
+                productData.forEach((product, index) => {
+                    const row = productTableBody.insertRow();
+                    row.innerHTML = `
+                        <td>${index + 1}</td>
+                        <td>${product.description || 'xxxxxxx'}</td>
+                        <td>${product.hsnCode || 'xxxxxxx'}</td>
+                        <td>${product.quantity || 'xxxxxxx'}</td>
+                        <td style="border-right:block;">${product.rate || 'xxxxxxx'}</td>
+                        <td>${product.amount || 'xxxxxxx'}</td>
+                    `;
+                    subtotal += parseFloat(product.amount || 0);
+                });
+
+                // Update subtotal, IGST, and total amount
+                const igst = (subtotal * 0.18).toFixed(2);
+                const totalAmount = (subtotal + parseFloat(igst)).toFixed(2);
+
+                document.querySelector('.subtotal-row td:last-child').textContent = subtotal.toFixed(2);
+                document.querySelector('.igst-row td:last-child').textContent = igst;
+                document.querySelector('.total-row td:last-child').textContent = totalAmount;
+
+                // Convert the total amount to words and display it
+                document.querySelector('#totalAmountInWords').textContent = convertNumberToWords(totalAmount);
+            }
+
+            // Optionally clear localStorage if no longer needed
+            // localStorage.removeItem('invoiceData');
+            // localStorage.removeItem('productData');
+        }
+
+        function convertNumberToWords(amount) {
+            const units = ['Zero', 'One', 'Two', 'Three', 'Four', 'Five', 'Six', 'Seven', 'Eight', 'Nine'];
+            const teens = ['Eleven', 'Twelve', 'Thirteen', 'Fourteen', 'Fifteen', 'Sixteen', 'Seventeen', 'Eighteen', 'Nineteen'];
+            const tens = ['Ten', 'Twenty', 'Thirty', 'Forty', 'Fifty', 'Sixty', 'Seventy', 'Eighty', 'Ninety'];
+            const thousands = ['Hundred', 'Thousand', 'Lakh', 'Crore'];
+
+            let words = [];
+
+            function getWords(n, suffix) {
+                if (n > 0) {
+                    if (n > 19) {
+                        words.push(tens[Math.floor(n / 10) - 1]);
+                        if (n % 10 > 0) words.push(units[n % 10]);
+                    } else if (n > 10) {
+                        words.push(teens[n - 11]);
+                    } else if (n === 10) {
+                        words.push(tens[0]);
+                    } else {
+                        words.push(units[n]);
+                    }
+                    if (suffix) words.push(suffix);
+                }
+            }
+
+            let num = parseInt(amount, 10);
+            getWords(Math.floor(num / 10000000), thousands[3]);
+            getWords(Math.floor((num / 100000) % 100), thousands[2]);
+            getWords(Math.floor((num / 1000) % 100), thousands[1]);
+            getWords(Math.floor((num / 100) % 10), thousands[0]);
+            getWords(num % 100, '');
+
+            return words.length > 0 ? words.join(' ').trim() + " Rupees Only" : "Zero Rupees Only";
+        }
+
+        window.onload = populateInvoice;
+
+    </script>
+
+</head>
+
+<body>
+    <div class="body-container">
+
+        <div class="container">
+
+            <div class="company-name-logo-container">
+                <div class="company-name-details">
+                    <h2>Maxmoc Motor Works India Private Limited</h2>
+                    <p>100/2A,Alamarathupatti</p>
+                    <p>Dindigul - 624303</p>
+                    <p>Tell : 9952823148</p>
+                    <p>GST No : 33AAQCM2589RIZG</p>
+                </div>
+                <div class="logo">
+                    <img src="/img/Logo.png" alt="Company Logo" width="110px">
+                </div>
+            </div>
+    
+            <div class="invoice-details-header-data-container">
+                <div class="invoice-header">
+                    <h3>Tax Invoice</h3>
+                    <div class="check-box">
+                        <div class="check-box-data">
+                            <p style="border-bottom: 1px solid black;"></p>
+                        </div>
+                        <div class="check-box-data">
+                            <p style="border-bottom: 1px solid black;"></p>
+                        </div>
+                        <div class="check-box-data">
+                            <p></p>
+                        </div>
+                    </div>
+                    <div class="invoice-content">
+                        <p>Original for Recipient</p>
+                        <p>Duplicate for Supplier / Transporter</p>
+                        <p>Triplicate for Supplier</p>
+                    </div>
+                </div>
+    
+                <div class="customer-details-container">
+                    <div class="customer-details">
+                        <table>
+                            <tr>
+                                <th>Customer / Participant Name & Address</th>
+                                <th><strong>:</strong></th>
+                            </tr>
+                            <tr>
+                                <td id="customerName" style="padding-left: 0; font-weight: bolder; text-transform: capitalize;"></td>
+                            </tr>
+
+                            <tr>
+                                <td id="customerAddress" style="padding-left: 0;"></td>
+                            </tr>
+
+                            <tr>
+                                <td id="customerAddress2" style="padding-left: 0;"></td>
+                            </tr>
+                            <tr>
+                                <td id="customerAddress3" style="padding-left: 0;"></td>
+                            </tr>
+                            <tr>
+                                <th>GSTIN/UIN No</th>
+                                <th><strong>:</strong></th>
+                                <td id="gstNo" style="text-transform: uppercase;"></td>
+                            </tr>
+                            <tr>
+                                <th>Contact No</th>
+                                <th><strong>:</strong></th>
+                                <td id="teleNo"></td>
+                            </tr>
+                            <tr>
+                                <th>Email</th>
+                                <th><strong>:</strong></th>
+                                <td id="Email"></td>
+                            </tr>
+                            <tr>
+                                <th>State Name</th>
+                                <th><strong>:</strong></th>
+                                <td id="stateName"></td>
+                            </tr>
+                            <tr>
+                                <th>Vehical No</th>
+                                <th><strong>:</strong></th>
+                                <td id="vehicleNo"></td>
+                            </tr>
+                        </table>
+                    </div>
+    
+                    <div class="customer-details-input-header-container">
+                        <div class="customer-details-input-header">
+                            <table>
+                                <tr>
+                                    <th>Tax Invoice No</th>
+                                </tr>
+                                <tr>
+                                    <th>Date</th>
+                                </tr>
+                                <tr>
+                                    <th>Your PO / WO No</th>
+                                </tr>
+                                <tr>
+                                    <th>Po Date</th>
+                                </tr>
+                                <tr>
+                                    <th>Project Engg. Name</th>
+                                </tr>
+                                <tr>
+                                    <th>Email ID</th>
+                                </tr>
+                                <tr>
+                                    <th>Contact No</th>
+                                </tr>
+                                <tr>
+                                    <th>Country</th>
+                                </tr>
+                                <tr>
+                                    <th>Country Code</th>
+                                </tr>
+                            </table>
+                        </div>
+                    </div>
+    
+                    <div class="customer-input-datas-container" style="border-left: 1px solid black;">
+                        <div class="customer-details-input-datas" style="border-left: none;">
+                            <table style="border-left: none;">
+                                <tr>
+                                    <td id="invoiceNumber">xxxxxxx</td>
+                                </tr>
+                                <tr>
+                                    <td id="invoiceDate">xxxxxxx</td>
+                                </tr>
+                                <tr>
+                                    <td  id="PO/WO" >.</td>
+                                </tr>
+                                <tr>
+                                    <td style="opacity: 0;" id="dueDate">.</td>
+                                </tr>
+                                <tr>
+                                    <td id="engg">Sathya Bama</td>
+                                </tr>
+                                <tr>
+                                    <td id="email">sathya@maxmoc.in</td>
+                                </tr>
+                                <tr>
+                                    <td id="contact">9952823148</td>
+                                </tr>
+                                <tr>
+                                    <td id="country">India</td>
+                                </tr>
+                                <tr>
+                                    <td id="countrycode">91</td>
+                                </tr>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+    
+            <div class="product-details-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>S.No</th>
+                            <th>Product Description</th>
+                            <th>HSN Code</th>
+                            <th>Quantity</th>
+                            <th>Rate Per</th>
+                            <th>Amount(INR)</th>
+                        </tr>
+                    </thead>
+                    <tbody id="productTableBody">
+                        <!-- Product rows will be added here -->
+                    </tbody>
+                    <tfoot>
+                        <tr class="subtotal-row">
+                            <td colspan="5">Subtotal</td>
+                            <td id="subtotal" style="border-right: none; text-align: center;">xxxxxxx</td>
+                        </tr>
+                        <tr class="igst-row">
+                            <td colspan="5">IGST @ 18%</td>
+                            <td id="igst" style="border-right: none; text-align: center;">xxxxxxx</td>
+                        </tr>
+                        <tr class="total-row">
+                            <td colspan="5">Total Amount</td>
+                            <td id="totalAmount" style="border-right: none; text-align: center;">xxxxxxx</td>
+                        </tr>
+                    </tfoot>
+                </table>
+            </div>
+            <div class="amount">
+                <h5>Amount in word : <span id="totalAmountInWords">xxxxxxx</span></h5>
+                <!-- Amount in words will be displayed here -->
+            </div>
+    
+            <div class="product-terms-details">
+                <div id="pay">
+                    <h4 style="font-size: 12px;">Payment Terms/Details</h4>
+                </div>
+    
+                <div class="product-terms-details-heading">
+                    <table>
+                        <tr>
+                            <th>Acount Name</th>
+                        </tr>
+                        <tr>
+                            <th>Name of the Bank</th>
+                        </tr>
+                        <tr>
+                            <th>Account No</th>
+                        </tr>
+                        <tr>
+                            <th>RTGS / IFSC</th>
+                        </tr>
+                        <tr>
+                            <th>MICRO CODE</th>
+                        </tr>
+                    </table>
+                </div>
+    
+                <div class="product-terms-details-data">
+    
+                    <table>
+                        <tr>
+                            <td>: Maxmoc Motor Works India PVT LTD</td>
+                        </tr>
+                        <tr>
+                            <td>: HDFC Bank Limited,Dindigul Branch</td>
+                        </tr>
+                        <tr>
+                            <td>: 50200074826031</td>
+                        </tr>
+                        <tr>
+                            <td>: HDFC0001850</td>
+                        </tr>
+                        <tr>
+                            <td>: 625240006</td>
+                        </tr>
+                    </table>
+                </div>
+    
+            </div>
+    
+            <div class="footer-details">
+                <p><strong>PAN NO :</strong> AAQCM2589R</p>
+                <p><strong>Web Site :</strong> www.maxmoc.in / support@maxmoc.in</p>
+                <p>We hereby declare that, the information incorporated is true and value started in invoice is the gross
+                    amount receivable / advance <br> for the services rendered / to be rendered</p>
+                <p style="margin-left: 500px;"> (Subject Of Dindigul Jurisdiction) </p>
+            </div>
+    
+        </div>
+    
+        <p style="margin-left: 45px; margin-top: 10px; font-size: 13px;">Registered office Address : 3/94, Panjampatty,
+            Alamarathupatti, Dindigul - 624303.</p>
+    
+        <div class="qrcode-container">
+            <div class="qrcode-container-border">
+                <div class="logo-bottom">
+                    <img src="/img/Logo.png" alt="" width="110px">
+                </div>
+    
+                <div class="qrcode">
+                    <h3>QR Code</h3>
+                    <div class="qr"></div>
+                </div>
+    
+                <div class="information-container">
+                    <p>Where hereby declare that the information incorporated is true and the value started in the invoice
+                        is the gross amount receivable / advance for the services rendered / to be rendered</p>
+                    <p>(Subject Of Dindigul Jurisdiction)</p>
+                    <p>Registered office Address : 3/94, Panjampatty, Alamarathupatti, Dindigul - 624303.</p>
+                </div>
+    
+                <div class="qr-info">
+                    <h5>For MAXMOC MOTOR WORKS</h5>
+                    <div class="qr-info-name-details">
+                        <h4>Sathish Kumar <br> Murugan</h4>
+                        <p>Digitally signed by Sathish Kumar Murugan <br> E-Mail : skmurugan@maxmoc.in <br>Date :
+                            <span id="bottomDate">xxxxxxx</span></p>
+                    </div>
+                    <p class="sign">(Authorized Signatory)</p>
+                </div>
+    
+                <div class="qr-footer-container">
+    
+                    <div class="footer-address">
+                        <p>Maxmoc Motor Works <br>
+                            100/2A,Alamarathupatti, <br>
+                            Dindigul - 624303.</p>
+                    </div>
+                    <div class="footer-pan-details">
+                        <p>Managing Director: Sathish Kumar Murugan <br> PAN No. AAQCM2589R </p>
+                    </div>
+                    <div class="footer-bank-details">
+                        <div class="footer-account-header">
+                            <table>
+                                <tr>
+                                    <th>Account Name</th>
+                                    <td>Maxmoc Motor Works India PVT LTD</td>
+                                </tr>
+                                <tr>
+                                    <th>Bank Name</th>
+                                    <td>HDFC Bank Limited, Dindigul Branch</td>
+                                </tr>
+                                <tr>
+                                    <th>Account No</th>
+                                    <td>50200074826031</td>
+                                </tr>
+                                <tr>
+                                    <th>RTGS/IFSC</th>
+                                    <td>HDFC0001850</td>
+                                </tr>
+                                <tr>
+                                    <th>MICR CODE</th>
+                                    <td>625240006</td>
+                                </tr>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="save-as-pdf">
+        <button id="savePdfButton">Save as PDF</button>
+    </div>
+    
+    <script>
+
+        // window.addEventListener('DOMContentLoaded', (event) => {
+        // window.print();
+        // })
+
+        document.getElementById('savePdfButton').addEventListener('click', function () {
+            const invoiceContent = document.querySelector('.body-container');
+            
+            const options = {
+                margin: 0,  // No margins
+                filename: 'invoice.pdf',
+                image: { type: 'jpeg', quality: 0.98 },
+                html2canvas: { scale: 2 },
+                jsPDF: { unit: 'in', format: 'a4', orientation: 'landscape' },  // Landscape format
+                pagebreak: { mode: ['css', 'legacy'] }
+            };
+    
+            html2pdf().from(invoiceContent).set(options).save();
+        });
+    </script> 
+
+</body>
+</html>

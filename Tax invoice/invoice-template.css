@@ -1,0 +1,328 @@
+* {
+    margin: 0;
+    padding: 0;
+    font-family: sans-serif;
+}
+.body-container{
+    padding: 15px;
+}
+.container {
+    width: 97vw;
+    height: 100vh;
+    border: 2px solid black;
+}
+.company-name-logo-container {
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-bottom: 2px solid black;
+    padding: 5px;
+}
+
+.company-name-details {
+    width: 100%;
+    text-align: center;
+}
+
+.company-name-details h2 {
+    font-size: 12px;
+}
+
+.company-name-details p {
+    font-size: 10px;
+}
+
+.logo {
+    position: absolute;
+    right: 10px;
+    top: 10px;
+}
+
+
+.invoice-header {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 2px solid black;
+    box-sizing: border-box;
+}
+
+.invoice-header h3 {
+    width: 52.2%;
+    text-align: center;
+    margin: 0;
+}
+
+.check-box {
+    width: 24.9%;
+    display: flex;
+    flex-direction: column;
+    height: 53px;
+    border-left: 1px solid black;
+    border-right: 1px solid black;
+}
+.check-box .check-box-data p{
+    margin-top: 18px;
+}
+
+.invoice-content {
+    width: 27%;
+    padding-left: 20px;
+    box-sizing: border-box;
+}
+
+.invoice-content p {
+    margin: 3px 0;
+    font-size: 10px;
+}
+
+.customer-details-container {
+    display: flex;
+    border-bottom: 1px solid black;
+}
+.invoice-details-header-data-container{
+    box-sizing: border-box;
+}
+.customer-details {
+    width: 50.1%;
+    padding-left: 10px;
+    border-right: 1px solid black;
+    box-sizing: border-box;
+}
+.customer-details table tr td{
+    padding-left: 20px;
+}
+.customer-details table tr th strong{
+    padding-left: 10px;
+}
+.customer-details table,
+.customer-details-input-header table,
+.customer-details-input-datas table {
+    border-collapse: collapse;
+}
+
+.customer-details th,
+.customer-details td,
+.customer-details-input-header th,
+.customer-details-input-datas td {
+    text-align: left;
+    font-size: 12px;
+}
+.customer-details-input-header-container{
+    width: 23.9%;
+}
+.customer-details-input-header table{
+    margin-left: 10px;
+}
+.customer-details-input-datas table{
+    margin-left: 22px;
+}
+.customer-input-datas-container {
+    width: 26%;
+    box-sizing: border-box;
+}
+
+.customer-details-input-header {
+    padding-right: 10px;
+    box-sizing: border-box;
+}
+
+.product-details-container {
+    margin-top: 0;
+    box-sizing: border-box;
+}
+
+.product-details-container table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.product-details-container th,
+.product-details-container td {
+    border: 1px solid black;
+    padding: 4px;
+    text-align: center;
+}
+
+.product-details-container th {
+    font-weight: bold;
+}
+
+.subtotal-row td,
+.igst-row td,
+.total-row td {
+    text-align: right;
+}
+
+.total-row {
+    font-weight: bold;
+}
+.amount{
+    padding: 7px;
+    border-bottom: 1px solid black;
+}
+.amount h5{
+    font-weight: bolder;
+}
+.amount h5 span{
+    margin-left: 5px;
+}
+.product-terms-details{
+    position: relative;
+    width: 100%;
+    box-sizing: border-box;
+    padding: 5px;
+    border-bottom: 1px solid black;
+    display: flex;
+}
+.product-terms-details-data{
+    margin-top: 20px;
+}
+.product-terms-details-heading{
+    margin-top: 20px;
+    position: absolute;
+}
+.product-terms-details .product-terms-details-heading table{
+    text-align: left;
+}
+.product-terms-details .product-terms-details-heading table tr,th{
+    padding-top: 5px;
+    font-size: 12px;
+}
+.product-terms-details .product-terms-details-data table{
+    margin-left: 5px;
+}
+.product-terms-details .product-terms-details-data table tr,td{
+    padding-top: 5px;
+    font-size: 12px;
+}
+.footer-details{
+    padding-left: 5px;
+    padding-bottom: 10px;
+}
+.product-details-container table thead tr th{
+    border-top: none;
+    border-left: none;
+}
+.product-details-container table thead tr th:nth-child(6){
+    border-right: none;
+}
+.product-details-container table tbody tr td{
+    border-left: none;
+}
+.product-details-container table tbody tr td:nth-child(6){
+    border-right: none;
+}
+.product-details-container table tfoot tr td{
+    border-left: none;
+}
+.footer-details p{
+    font-size: 10px;
+    margin-top: 5px;
+}
+.footer-details p strong{
+    font-size: 10px;
+}
+
+/* Qr code  css */
+
+.qrcode-container {
+    width: 97vw;
+    height: 100vh;
+    position: relative;
+}
+.qrcode-container .qrcode-container-border{
+    position: relative;
+    width: 100%;
+    height: auto;
+    top: 20px;
+    border: 2px solid black;
+}
+.logo-bottom{
+    position: absolute;
+    right: 30px;
+    top: 15px;
+}
+.qrcode{
+    margin-top: 80px;
+    width: 50%;
+    height: 200px;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+}
+.qr{
+    width: 250px;
+    height: 250px;
+    border: 1px solid black;
+}
+.information-container{
+    margin-top: 50px;
+    font-size: 12px;
+}
+.information-container p{
+    margin-left: 30px;
+    margin-top: 5px;
+}
+.qr-info{
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    margin-top: 30px;
+    margin-left: 500px;
+}
+.qr-info .date{
+    font-size: 10px;
+    margin-right: 15px;
+}
+.sign{
+    margin-top: 15px;
+}
+.qr-info-name-details{
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+    margin-top: 10px;
+}
+.qr-info-name-details p{
+    margin-left: 30px;
+    font-size: 10px;
+    margin-top: 5px;
+}
+.qr-footer-container{
+    font-size: 10px;
+    margin-top: 70px;
+    display: flex;
+    justify-content: space-around;
+    margin-bottom: 10px;
+}
+.footer-account-header table tr th{
+    text-align: left;
+}
+.footer-account-header table tr td {
+    padding-left: 20px;
+}
+
+.save-as-pdf{
+    margin-top: 50px;
+    margin-left: 30px;
+    margin-bottom: 10px;
+}
+.save-as-pdf button{
+    background-color: #1B56A5;
+    padding: 10px;
+    border: none;
+    color: #fff;
+    cursor: pointer;
+    border-radius: 5px;
+}
+@media print{
+    .save-as-pdf{
+        display: none;
+    }
+    .container{
+        height: 92vh;
+    }
+}
